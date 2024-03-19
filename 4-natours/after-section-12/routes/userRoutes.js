@@ -1,6 +1,10 @@
 const express = require('express');
+// const multer = require('multer');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
+
+// Topic: Image Uploads Using Multer: Users
+// const upload = multer({ dest: 'public/img/users' });
 
 const router = express.Router();
 

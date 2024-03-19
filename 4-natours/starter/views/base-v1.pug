@@ -1,0 +1,18 @@
+//- Topic: First Steps with Pug
+doctype html
+html 
+  head 
+    title Natours | #{tour} 
+    link(rel="stylesheet" href="css/style.css")
+    link(rel="shortcut icon" type="image/png" href="img/favicon.png")
+
+  body 
+    h1= tour
+    h2= user.toUpperCase()
+    //- // visible, //- invisible
+    // h1 The Park Camper 
+
+    - const x = 9; //- Buffered code
+    h2= 2 * x 
+
+    p This is just some text

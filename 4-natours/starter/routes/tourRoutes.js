@@ -1,47 +1,60 @@
-// Topic: A Better File Structure
 const express = require('express');
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
+const reviewRouter = require('./reviewRoutes');
 
-// Topic: Creating and Mounting Multiple Routers
-const router = express.Router(); // middleware func
+const router = express.Router();
 
-// Topic: Param middleware
 // router.param('id', tourController.checkID);
 
-// Topic: Making the API Better: Aliasing
+// POST /tour/234fad4/reviews
+// GET /tour/234fad4/reviews
+
+router.use('/:tourId/reviews', reviewRouter);
+
 router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTours, tourController.getAllTours);
 
-// Topic: Aggregation Pipeline: Matching and Grouping
 router.route('/tour-stats').get(tourController.getTourStats);
+router
+  .route('/monthly-plan/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide', 'guide'),
+    tourController.getMonthlyPlan,
+  );
 
-// Topic: Aggregation Pipeline: Unwinding and Projecting
-router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+// /tours-within?distance=233&center=-40,45&unit=mi
+// /tours-within/233/center/-40,45/unit/mi
 
-// Topic: Chaining Multiple Middleware Functions
-// Create a check body middleware
-// Check if body contains the name and price property
-// If not, send back 400 (bad request)
-// Add it to the post handler stack
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
 
 router
   .route('/')
-  // Topic: Protecting Tour Routes - Part 1
-  // NOTE Check user login
-  .get(authController.protect, tourController.getAllTours)
-  .post(tourController.createTour);
-// .post(tourController.checkBody, tourController.createTour);
+  .get(tourController.getAllTours)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.createTour,
+  );
 
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
-  .delete(
-    // Topic: Authorization: User Roles and Permissions
+  .patch(
     authController.protect,
-    authController.restrictTo('admin', 'lead-guild'),
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
+    tourController.updateTour,
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
   );
 

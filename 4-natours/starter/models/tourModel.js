@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+// const User = require('./userModel');
 // const validator = require('validator'); // npm i validator
 
 // Topic: Creating a Simple Tour Model
@@ -43,6 +44,8 @@ const tourSchema = new mongoose.Schema(
       // 🦊
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be above 5.0'],
+      // Topic: Preventing Duplicate Reviews
+      set: (val) => Math.round(val * 10) / 10, // 4.66666, 46.6666, 47, 4.7
     },
     ratingsQuantity: {
       type: Number,
@@ -87,13 +90,59 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Topic: Modelling Locations (Geospatial Data)
+    startLocation: {
+      // GeoJSON
+      // NOTE embedded obj, not schema
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    // Topic: Modelling Tour Guilds: Embedding 🍿
+    // guides: Array,
+    // Topic: Modelling Tour Guilds: Child Referencing
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
 
+// Topic: Improving Read Performance with Indexes
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 }); // asc dsc
+tourSchema.index({ slug: 1 });
+
+// Topic: Geospatial Queries: Finding Tours Within Radius
+tourSchema.index({ startLocation: '2dsphere' });
+
 // Topic: Virtual Properties
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// Topic: Virtual Populate: Tours and Reviews
+// (2) in tourController.js
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // Topic: Document Middleware
@@ -105,6 +154,7 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next(); // If it don't have next, loading will stuck
 });
+// NOTE
 
 // tourSchema.pre('save', (next) => {
 //   console.log('Will save document...');
@@ -113,6 +163,13 @@ tourSchema.pre('save', function (next) {
 
 // tourSchema.post('save', (doc, next) => {
 //   console.log(doc);
+//   next();
+// });
+
+// 🍿 embedding
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromise = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromise);
 //   next();
 // });
 
@@ -126,6 +183,17 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+// Topic: Populating Tour Guides (from tourController.js)
+tourSchema.pre(/^find/, function (next) {
+  // this = current query
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+
+  next();
+});
+
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   // console.log(docs);
@@ -133,11 +201,12 @@ tourSchema.post(/^find/, function (docs, next) {
 });
 
 // Topic: Aggregation Middleware
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  // console.log(this.pipeline());
-  next();
-});
+// BUG geoNear must be the first stage in the pipeline in Topic: Geospatial Aggregation: Calculating Distances
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   console.log(this.pipeline());
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 

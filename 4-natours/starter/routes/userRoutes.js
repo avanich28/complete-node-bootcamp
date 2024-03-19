@@ -8,23 +8,38 @@ const router = express.Router();
 router.post('/signup', authController.signup);
 // Topic: Logging in Users
 router.post('/login', authController.login);
+// Topic: Logging out Users
+router.get('/logout', authController.logout);
 
 // Topic: Password Reset Functionality: Reset Token
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+// Topic: Adding Missing Authentication and Authorization
+// NOTE Protect all routes after this middleware
+router.use(authController.protect);
+
 // Topic: Updating the Current User: Password
-router.patch(
-  '/updateMyPassword',
-  authController.protect,
-  authController.updatePassword,
-);
+router.patch('/updateMyPassword', authController.updatePassword);
+
+// Topic: Adding a/me Endpoint
+router.get('/me', userController.getMe, userController.getUser);
 
 // Topic: Updating the Current User: Data
-router.patch('/updateMe', authController.protect, userController.updateMe);
+router.patch(
+  '/updateMe',
+  // Topic: Image Uploads Using Multer: Users
+  userController.uploadUserPhoto,
+  // Topic: Resizing Images
+  userController.resizeUserPhoto,
+  userController.updateMe,
+);
 
 // Topic: Deleting the Current User
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.delete('/deleteMe', userController.deleteMe);
+
+// Topic: Adding Missing Authentication and Authorization
+router.use(authController.restrictTo('admin'));
 
 // Topic: Implementing the "Users" Routes
 router

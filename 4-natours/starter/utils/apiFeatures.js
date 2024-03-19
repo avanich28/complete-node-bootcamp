@@ -24,7 +24,7 @@ class APIFeatures {
 
   sort() {
     // Topic: Preventing Parameter Pollution
-    console.log(this.queryString.sort); // BUG Don't have hpp -> [ 'duration', 'price' ]
+    console.log(this.queryString.sort); // BUG Don't have 'hpp' -> [ 'duration', 'price' ]
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
