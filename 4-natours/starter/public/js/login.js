@@ -11,7 +11,7 @@ export const login = async (email, password) => {
     // axios returns promise
     const res = await axios({
       method: 'POST',
-      url: 'https://natours-job.vercel.app/api/v1/users/login',
+      url: '/api/v1/users/login',
       data: {
         email,
         password,
@@ -36,7 +36,7 @@ export const logout = async () => {
     console.log('hello logout');
     const res = await axios({
       method: 'GET',
-      url: 'https://natours-job.vercel.app/api/v1/users/logout',
+      url: '/api/v1/users/logout',
     });
 
     if (res.data.status === 'success') location.reload(true);

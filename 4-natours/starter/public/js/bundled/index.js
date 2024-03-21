@@ -1949,7 +1949,7 @@ const login = async (email, password)=>{
         // axios returns promise
         const res = await (0, _axiosDefault.default)({
             method: "POST",
-            url: "https://natours-job.vercel.app/api/v1/users/login",
+            url: "/api/v1/users/login",
             data: {
                 email,
                 password
@@ -1971,7 +1971,7 @@ const logout = async ()=>{
         console.log("hello logout");
         const res = await (0, _axiosDefault.default)({
             method: "GET",
-            url: "https://natours-job.vercel.app/api/v1/users/logout"
+            url: "/api/v1/users/logout"
         });
         if (res.data.status === "success") location.reload(true);
     } catch (err) {
@@ -6400,7 +6400,7 @@ parcelHelpers.export(exports, "bookTour", ()=>bookTour);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 var _alert = require("./alert");
-const stripe = Stripe(undefined);
+const stripe = Stripe(`${undefined}`);
 const bookTour = async (tourId)=>{
     try {
         // 1) Get checkout session from API

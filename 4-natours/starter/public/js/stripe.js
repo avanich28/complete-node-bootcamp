@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { showAlert } from './alert';
 
-const stripe = Stripe(process.env.STRIPE_PUBLIC_KEY);
+const stripe = Stripe(`${process.env.STRIPE_PUBLIC_KEY}`);
 
 // Topic: Processing Payments on the Front-End
 export const bookTour = async (tourId) => {
