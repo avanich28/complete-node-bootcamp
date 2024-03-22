@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { showAlert } from './alert';
+import { showAlert } from './alerts';
 import axios from 'axios';
 
 // Topic: Updating User Data with Our API

@@ -6399,8 +6399,8 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "bookTour", ()=>bookTour);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
-var _alert = require("./alert");
-const stripe = Stripe(`${undefined}`);
+var _alerts = require("./alerts");
+const stripe = Stripe("pk_test_51OuuXk01rGGIh85XogHGwXOBC2LyM4SeLICR1oCspzknsM4vVlO7mJL9Z9w7giVknQSvyBjPqi4F0dnBlqTl9oR500l6uemeJ7");
 const bookTour = async (tourId)=>{
     try {
         // 1) Get checkout session from API
@@ -6412,10 +6412,27 @@ const bookTour = async (tourId)=>{
         });
     } catch (err) {
         console.log(err);
-        (0, _alert.showAlert)("error", err);
+        (0, _alerts.showAlert)("error", err);
     }
 };
 
-},{"axios":"9tTHC","./alert":"fkkBP","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}]},["jENEf"], "jENEf", "parcelRequire11c7")
+},{"axios":"9tTHC","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP","./alerts":"7kTl7"}],"7kTl7":[function(require,module,exports) {
+/* eslint-disable */ // Topic: Logging in Users with Our API - Part 3
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
+parcelHelpers.export(exports, "showAlert", ()=>showAlert);
+const hideAlert = ()=>{
+    const el = document.querySelector(".alert");
+    if (el) el.parentElement.removeChild(el);
+};
+const showAlert = (type, msg, time = 7)=>{
+    hideAlert();
+    const markup = `<div class="alert alert--${type}">${msg}</div>`;
+    document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
+    window.setTimeout(hideAlert, time * 1000);
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}]},["jENEf"], "jENEf", "parcelRequire11c7")
 
 //# sourceMappingURL=index.js.map

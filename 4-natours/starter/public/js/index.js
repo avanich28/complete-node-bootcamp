@@ -5,6 +5,7 @@ import { displayMap } from './leaflet';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
+import { showAlert } from './alerts';
 
 // Topic: Logging in Users with Our API - Part 3
 
@@ -77,3 +78,7 @@ if (bookBtn)
     const { tourId } = e.target.dataset;
     bookTour(tourId);
   });
+
+// Topic: Finishing Payments with Stripe Webhooks
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 20);

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import axios from 'axios';
 // Topic: Logging in Users with Our API - Part 3
-import { showAlert } from './alert';
+import { showAlert } from './alerts';
 
 // Topic: Logging in Users with Our API - Part 1
 

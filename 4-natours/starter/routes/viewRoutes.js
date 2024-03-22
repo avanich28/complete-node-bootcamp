@@ -1,23 +1,19 @@
 const express = require('express');
 const viewsController = require('../controllers/viewsController');
 const authController = require('../controllers/authController');
-const bookingController = require('../controllers/bookingController');
 
 // Topic: Setting up the Project Structure
 const router = express.Router();
+
+// Topic: Finishing Payments with Stripe Webhooks
+router.use(viewsController.alerts);
 
 // Topic: Logging in Users with Our API - Part 2
 // router.use(authController.isLoggedIn);
 
 // Topic: Setting up Pug in Express
 // Topic: Logging in Users with Our API - Part 1 (from authController.js)
-router.get(
-  '/',
-  // Topic: Creating New Bookings on Checkout Success
-  bookingController.createBookingCheckout,
-  authController.isLoggedIn,
-  viewsController.getOverview,
-);
+router.get('/', authController.isLoggedIn, viewsController.getOverview);
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
 
 // Topic: Building the Login Screen
@@ -27,7 +23,13 @@ router.get('/login', authController.isLoggedIn, viewsController.getLoginForm);
 router.get('/me', authController.protect, viewsController.getAccount);
 
 // Topic: Rendering a User's Booked Tours
-router.get('/my-tours', authController.protect, viewsController.getMyTours);
+router.get(
+  '/my-tours',
+  // Topic: Creating New Bookings on Checkout Success
+  // bookingController.createBookingCheckout,
+  authController.protect,
+  viewsController.getMyTours,
+);
 
 // Topic: Updating User Data
 router.post(

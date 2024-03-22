@@ -4,6 +4,16 @@ const Booking = require('../models/bookingModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
+// Topic: Finishing Payments with Stripe Webhooks
+exports.alerts = (req, res, next) => {
+  const { alert } = req.query;
+  if (alert === 'booking')
+    res.locals.alert =
+      "Your booking was successful! Please check your email for confirmation. If your booking doesn't show up here immediately, please come back later.";
+
+  next();
+};
+
 // Topic: Setting up the Project Structure
 exports.getOverview = catchAsync(async (req, res, next) => {
   // Topic: Building the Tour Overview - Part 1

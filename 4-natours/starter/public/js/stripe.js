@@ -1,8 +1,9 @@
 /* eslint-disable */
 import axios from 'axios';
-import { showAlert } from './alert';
-
-const stripe = Stripe(`${process.env.STRIPE_PUBLIC_KEY}`);
+import { showAlert } from './alerts';
+const stripe = Stripe(
+  'pk_test_51OuuXk01rGGIh85XogHGwXOBC2LyM4SeLICR1oCspzknsM4vVlO7mJL9Z9w7giVknQSvyBjPqi4F0dnBlqTl9oR500l6uemeJ7',
+);
 
 // Topic: Processing Payments on the Front-End
 export const bookTour = async (tourId) => {
