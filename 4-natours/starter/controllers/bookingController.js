@@ -5,9 +5,10 @@ const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
 // Topic: Integrating Stripe into the Back-End
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
-  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
 
@@ -64,21 +65,20 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
 // Topic: Finishing Payments with Stripe Webhooks
 const createBookingCheckout = async (session) => {
-  console.log(session.customer_email, 'hello');
   const tour = session.client_reference_id;
   const user = (await User.findOne({ email: session.customer_email }))._id;
   const price = session.line_items[0].price.unit_amount / 100;
+
   await Booking.create({ tour, user, price });
 };
 
 exports.webhookCheckout = (req, res, next) => {
-  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   const signature = req.headers['stripe-signature'];
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-      req.rawBody,
+      req.body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
     );
