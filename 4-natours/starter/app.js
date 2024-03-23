@@ -64,7 +64,11 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Topic: Finishing Payments with Stripe Webhooks
-app.post('/webhook-checkout', express.raw(), bookingController.webhookCheckout);
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout,
+);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));

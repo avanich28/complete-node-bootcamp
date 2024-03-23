@@ -150,6 +150,7 @@ var _leaflet = require("./leaflet");
 var _login = require("./login");
 var _updateSettings = require("./updateSettings");
 var _stripe = require("./stripe");
+var _alerts = require("./alerts");
 // Topic: Logging in Users with Our API - Part 3
 // Topic: Including a Map with Mapbox - Part 1
 // console.log('hello from the client side :D');
@@ -206,8 +207,11 @@ if (bookBtn) bookBtn.addEventListener("click", (e)=>{
     const { tourId } = e.target.dataset;
     (0, _stripe.bookTour)(tourId);
 });
+// Topic: Finishing Payments with Stripe Webhooks
+const alertMessage = document.querySelector("body").dataset.alert;
+if (alertMessage) (0, _alerts.showAlert)("success", alertMessage, 20);
 
-},{"core-js/modules/es.regexp.flags.js":"lTY6A","core-js/modules/es.typed-array.set.js":"7VNIv","core-js/modules/web.immediate.js":"drIcV","./leaflet":"TxsLz","./login":"6f9OS","./updateSettings":"4UO8z","./stripe":"ahJl5"}],"lTY6A":[function(require,module,exports) {
+},{"core-js/modules/es.regexp.flags.js":"lTY6A","core-js/modules/es.typed-array.set.js":"7VNIv","core-js/modules/web.immediate.js":"drIcV","./leaflet":"TxsLz","./login":"6f9OS","./updateSettings":"4UO8z","./stripe":"ahJl5","./alerts":"7kTl7"}],"lTY6A":[function(require,module,exports) {
 "use strict";
 var global = require("c6bf5eee641c0bcc");
 var DESCRIPTORS = require("32574bd865b8e6e5");
@@ -1942,7 +1946,7 @@ parcelHelpers.export(exports, "logout", ()=>logout);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 // Topic: Logging in Users with Our API - Part 3
-var _alert = require("./alert");
+var _alerts = require("./alerts");
 const login = async (email, password)=>{
     console.log(email, password);
     try {
@@ -1957,13 +1961,13 @@ const login = async (email, password)=>{
         });
         // Topic: Logging in Users with Our API - Part 2
         if (res.data.status === "success") {
-            (0, _alert.showAlert)("success", "Logged in successfully!");
+            (0, _alerts.showAlert)("success", "Logged in successfully!");
             window.setTimeout(()=>{
                 location.assign("/");
             }, 1500);
         }
     } catch (err) {
-        (0, _alert.showAlert)("error", err.response.data.message);
+        (0, _alerts.showAlert)("error", err.response.data.message);
     }
 };
 const logout = async ()=>{
@@ -1976,11 +1980,11 @@ const logout = async ()=>{
         if (res.data.status === "success") location.reload(true);
     } catch (err) {
         console.log(err.response);
-        (0, _alert.showAlert)("error", "Error logging out! Try again.");
+        (0, _alerts.showAlert)("error", "Error logging out! Try again.");
     }
 };
 
-},{"axios":"9tTHC","./alert":"fkkBP","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}],"9tTHC":[function(require,module,exports) {
+},{"axios":"9tTHC","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP","./alerts":"7kTl7"}],"9tTHC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _axiosJsDefault.default));
@@ -6355,7 +6359,7 @@ Object.entries(HttpStatusCode).forEach(([key, value])=>{
 });
 exports.default = HttpStatusCode;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}],"fkkBP":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}],"7kTl7":[function(require,module,exports) {
 /* eslint-disable */ // Topic: Logging in Users with Our API - Part 3
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -6365,18 +6369,18 @@ const hideAlert = ()=>{
     const el = document.querySelector(".alert");
     if (el) el.parentElement.removeChild(el);
 };
-const showAlert = (type, msg)=>{
+const showAlert = (type, msg, time = 7)=>{
     hideAlert();
     const markup = `<div class="alert alert--${type}">${msg}</div>`;
     document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
-    window.setTimeout(hideAlert, 5000);
+    window.setTimeout(hideAlert, time * 1000);
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}],"4UO8z":[function(require,module,exports) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "updateSettings", ()=>updateSettings);
-var _alert = require("./alert");
+var _alerts = require("./alerts");
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 const updateSettings = async (data, type)=>{
@@ -6387,13 +6391,13 @@ const updateSettings = async (data, type)=>{
             url,
             data
         });
-        if (res.data.status === "success") (0, _alert.showAlert)("success", `${type.toUpperCase()} updated successfully!`);
+        if (res.data.status === "success") (0, _alerts.showAlert)("success", `${type.toUpperCase()} updated successfully!`);
     } catch (err) {
-        (0, _alert.showAlert)("error", err.response.data.message);
+        (0, _alerts.showAlert)("error", err.response.data.message);
     }
 };
 
-},{"./alert":"fkkBP","axios":"9tTHC","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}],"ahJl5":[function(require,module,exports) {
+},{"axios":"9tTHC","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP","./alerts":"7kTl7"}],"ahJl5":[function(require,module,exports) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "bookTour", ()=>bookTour);
@@ -6416,23 +6420,6 @@ const bookTour = async (tourId)=>{
     }
 };
 
-},{"axios":"9tTHC","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP","./alerts":"7kTl7"}],"7kTl7":[function(require,module,exports) {
-/* eslint-disable */ // Topic: Logging in Users with Our API - Part 3
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
-parcelHelpers.export(exports, "showAlert", ()=>showAlert);
-const hideAlert = ()=>{
-    const el = document.querySelector(".alert");
-    if (el) el.parentElement.removeChild(el);
-};
-const showAlert = (type, msg, time = 7)=>{
-    hideAlert();
-    const markup = `<div class="alert alert--${type}">${msg}</div>`;
-    document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
-    window.setTimeout(hideAlert, time * 1000);
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"daMKP"}]},["jENEf"], "jENEf", "parcelRequire11c7")
+},{"axios":"9tTHC","@parcel/transformer-js/src/esmodule-helpers.js":"daMKP","./alerts":"7kTl7"}]},["jENEf"], "jENEf", "parcelRequire11c7")
 
 //# sourceMappingURL=index.js.map

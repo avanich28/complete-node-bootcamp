@@ -1,4 +1,5 @@
 const Stripe = require('stripe');
+const { buffer } = require('micro');
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
@@ -72,13 +73,14 @@ const createBookingCheckout = async (session) => {
   await Booking.create({ tour, user, price });
 };
 
-exports.webhookCheckout = (req, res, next) => {
+exports.webhookCheckout = async (req, res, next) => {
   const signature = req.headers['stripe-signature'];
+  const reqBuffer = await buffer(req);
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-      req.body,
+      reqBuffer,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
     );
@@ -86,7 +88,8 @@ exports.webhookCheckout = (req, res, next) => {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  if (event.status === 'complete') createBookingCheckout(event.data.object);
+  if (event.type === 'checkout.session.completed')
+    createBookingCheckout(event.data.object);
 
   res.status(200).json({ received: true });
 };
