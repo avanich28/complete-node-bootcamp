@@ -1,5 +1,4 @@
 const Stripe = require('stripe');
-const { buffer } = require('micro');
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
@@ -73,14 +72,13 @@ const createBookingCheckout = async (session) => {
   await Booking.create({ tour, user, price });
 };
 
-exports.webhookCheckout = async (req, res, next) => {
+exports.webhookCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
-  const reqBuffer = await buffer(req.body);
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-      reqBuffer,
+      req.body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
     );
