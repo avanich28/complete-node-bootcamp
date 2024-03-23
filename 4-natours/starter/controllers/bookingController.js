@@ -5,10 +5,9 @@ const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-
 // Topic: Integrating Stripe into the Back-End
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
 
@@ -73,6 +72,7 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
+  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   const signature = req.headers['stripe-signature'];
 
   let event;
