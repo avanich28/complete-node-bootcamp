@@ -66,7 +66,7 @@ app.use('/api', limiter);
 // Topic: Finishing Payments with Stripe Webhooks
 app.post(
   '/webhook-checkout',
-  express.raw({ type: 'application/json' }),
+  express.raw({ type: '*/*' }),
   bookingController.webhookCheckout,
 );
 
