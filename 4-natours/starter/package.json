@@ -12,7 +12,7 @@
     "dev": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "watch:js": "parcel watch --no-hmr ./public/js/index.js --dist-dir ./public/js/bundled",
-    "build:prod": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled"
+    "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled"
   },
   "author": "",
   "license": "ISC",
